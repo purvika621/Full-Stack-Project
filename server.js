@@ -14,7 +14,7 @@ mysqlserver.connect(function(err)
     console.log(err.message);
 });
 cloudinary.config({ 
-    cloud_name: 'dvdq3rbug', 
+    cloud_name: 'dvdq3rbug',
     api_key: '838633579214926', 
     api_secret: 'bMjM8exk7u1mWeE1z5IwVljelbE' // Click 'View API Keys' above to copy your API secret
 });
