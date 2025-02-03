@@ -319,7 +319,6 @@ app.get("/update-password", function(req,resp)
         }
     })
  })
- app.listen(2005,function()
-{
+ app.listen(process.env.PORT || 2005, function() {
     console.log("Server Started");
-})
+});
