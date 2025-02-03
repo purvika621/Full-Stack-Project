@@ -227,6 +227,7 @@ app.post("/publish-tournament", async function(req, resp) {
             try {
                 const result = await cloudinary.uploader.upload(path);
                 filename = result.url;  // Get URL of the image on Cloudinary
+                req.body.picupload=filename;
                 console.log("Uploaded to Cloudinary:", filename);
             } catch (cloudinaryErr) {
                 console.log("Error during Cloudinary upload:", cloudinaryErr);
@@ -243,7 +244,7 @@ app.post("/publish-tournament", async function(req, resp) {
         req.body.txttitle,
         req.body.txtcity,
         req.body.txtlocation,
-        filename,  // Use the filename URL from Cloudinary or default
+        req.body.picupload,  // Use the filename URL from Cloudinary or default
         req.body.txtfee,
         req.body.txtdate,
         req.body.txtprizes,
