@@ -206,35 +206,57 @@ app.get("/fetch-all-games",function(req,resp)
     })
 })
 //---------------Publish Tournament------------------------------------
-app.post("/publish-tournament",async function(req,resp)
-{
-let filename="";
-if(req.files==null)
-{
-    filename="nopic.jpg";
-}
-else
-{
-    filename=req.files.picupload.name;
-    let path=__dirname+"/public/uploads/"+filename;
-   console.log(path);
-    req.files.picupload.mv(path);
-    //saving file on cloudinary server
-    await cloudinary.uploader.upload(path).then(function(result){
-        filename=result.url;  //will give u the url of ur pic on cloudinary server
-        console.log(filename);
+app.post("/publish-tournament", async function(req, resp) {
+    let filename = "";
+    
+    if (req.files == null || req.files.picupload == undefined) {
+        filename = "nopic.jpg";  // Default if no file is uploaded
+    } else {
+        filename = req.files.picupload.name;
+        let path = __dirname + "/public/uploads/" + filename;
+        console.log("File path:", path);
+
+        // Move the uploaded file to the server
+        req.files.picupload.mv(path, async function(err) {
+            if (err) {
+                console.log("Error during file move:", err);
+                return resp.status(500).send("Error while moving file to server.");
+            }
+
+            // Uploading file to Cloudinary
+            try {
+                const result = await cloudinary.uploader.upload(path);
+                filename = result.url;  // Get URL of the image on Cloudinary
+                console.log("Uploaded to Cloudinary:", filename);
+            } catch (cloudinaryErr) {
+                console.log("Error during Cloudinary upload:", cloudinaryErr);
+                return resp.status(500).send("Error during Cloudinary upload.");
+            }
+        });
+    }
+
+    // Continue with database insertion only after file upload completion
+    mysqlserver.query("insert into tournaments values(?,?,?,?,?,?,?,?,?,?,?)", [
+        null,  // Assuming this is the auto-increment ID field
+        req.body.txtemail,
+        req.body.txtgame,
+        req.body.txttitle,
+        req.body.txtcity,
+        req.body.txtlocation,
+        filename,  // Use the filename URL from Cloudinary or default
+        req.body.txtfee,
+        req.body.txtdate,
+        req.body.txtprizes,
+        req.body.txtinfo
+    ], function(err) {
+        if (err == null) {
+            resp.send("Record saved successfully");
+        } else {
+            resp.send("Error while saving the record: " + err.message);
+        }
     });
-}
-req.body.picupload=filename;
-mysqlserver.query("insert into tournaments values(?,?,?,?,?,?,?,?,?,?,?)",[null,req.body.txtemail,req.body.txtgame,req.body.txttitle,req.body.txtcity,req.body.txtlocation,req.body.picupload,req.body.txtfee,req.body.txtdate,req.body.txtprizes,req.body.txtinfo],function(err)
-{
-   if(err==null)
-    resp.send("record saved succesfully");
-    else
-    resp.send(err.message);
-})
-//resp.send(req.body);
-})
+});
+
 //----------------------Fetch all tournaments from table tournaments to home page of website
 app.get("/fetch-all-tournaments",function(req,resp)
 {    
