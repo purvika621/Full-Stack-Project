@@ -1,4 +1,5 @@
 var express= require("express");
+var cors=require('cors');
 var app=express();
 var fileuploader=require("express-fileupload");
 var mysql2=require("mysql2");
@@ -23,6 +24,15 @@ cloudinary.config({
 });
 app.use(fileuploader());
 app.use(express.urlencoded(true));
+app.use(express.json()); // For parsing JSON bodies
+
+// app.use(cors({ origin: 'https://pulseforge.onrender.com' })); //means ye website hi mera backend acces kr skti hai not any another website
+app.use(cors({
+    origin: 'https://pulseforge.onrender.com',
+    methods: ['GET', 'POST']  // only allow GET and POST requests
+  })); //means ye website hi mera backend acces kr skti hai not any another website
+  
+
 app.use(express.static('public')); // Assuming your pics folder is in the public directory this line is used to make the fixed pics visible in  my website 
 //but due to this line i was not able to open any other html file(only the index.html was opening agian and agian) through the serveer therefore i commented this line
 
