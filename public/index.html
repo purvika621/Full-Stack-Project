@@ -117,7 +117,7 @@
 
     $.ajax({
         type: "GET",
-        url: "http://localhost:2005/check-user",
+        url: "/check-user",
         data: { txtmail: formdata.txtEmail }, // Send the email to the server
     }).done(function(response) {
         console.log(response);

@@ -3,6 +3,9 @@ var app=express();
 var fileuploader=require("express-fileupload");
 var mysql2=require("mysql2");
 var cloudinary=require("cloudinary").v2;
+const cors = require("cors");
+app.use(cors());
+
 
 let config="mysql://avnadmin:AVNS_8p1dW-dFtL8yZd0i-ZA@mysql-177f9110-purvikabansal05-ae65.k.aivencloud.com:11245/defaultdb?";
 let mysqlserver=mysql2.createConnection(config);
