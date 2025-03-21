@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+     <style>
+        .btn
+        {
+         margin-left: 10px;
+         margin-right: 20px;
+        }
+        #combo
+        {
+            width: 100px;
+        }
+        .navbartitles
+        {
+          margin-left: 40px;
+        }
+        .carousel-inner img {
+          height: 500px; /*Set the desired height */
+           width: 100%; /* Ensure the width covers the carousel */
+           object-fit: cover; /* Adjust image without distortion */
+          }
+          .center
+          {
+            justify-content: center;
+          }
+         
+          .navbar-brand {
+            text-align: center;
+            font-weight: bold;
+          }
+          .avatar-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            /* background-color: #d9d9d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white; */
+            object-fit: cover;
+        }
+        .card {
+     float: left;     
+  display: flex;
+  border: 1px solid #ddd;
+  padding: 10px;
+  max-width: 400px;
+  border-radius: 10px;
+  margin-left: 20px;
+}
+
+.card-left {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.profile-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.card-right {
+  flex: 2;
+}
+
+.card-right h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.card-right p {
+  font-size: 14px;
+  color: #555;
+}
+
+
+     </style>
+         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+          <script>
+ $(document).ready(function() {
+    $("#signupbtn").click(function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var formdata = {
+            txtEmail: $('#txtEmail').val(),
+            txtPwd: $('#txtPwd').val(),
+            utype: $('#utype').val()
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/signup-process-secure",
+            data: formdata
+        }).done(function(response) {
+            alert(response);
+        }).fail(function(err) {
+            alert(err.message);
+        });
+    });
+    $("#loginbtn").click(function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    var formdata = {
+        txtEmail: $('#loginEmail').val(), // Use new ID
+        txtPwd: $('#loginPwd').val() // Use new ID
+    };
+
+    $.ajax({
+        type: "GET",
+        url: "/check-user",
+        data: { txtmail: formdata.txtEmail }, // Send the email to the server
+    }).done(function(response) {
+        console.log(response);
+        alert("User Type: " + response);
+        if(response==="organiser")
+        {
+          location.href="dashorganiser.html";
+          localStorage.setItem("activeuser",formdata.txtEmail);
+        }
+        else if(response==="player")
+        {
+          location.href="dashplayer.html";
+          localStorage.setItem("activeuser",formdata.txtEmail);
+        }
+        else
+        {
+          alert("invalid credentials");
+        }
+    }).fail(function(err) {
+        alert(err.message);
+    });
+});
+
+});
+
+    </script>
+
+</head>
+<body style="background-color: lightsteelblue">
+    <!-- <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand"><b>GameChase</b>- Your Tournament Finder</a>
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalSignup">SIGNUP</button>
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalLogin">LOGIN</button>
+
+          </form>
+        </div>
+      </nav> -->
+
+
+
+      
+
+
+
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><b>Pulse Forge</b></a>
+          <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button> -->
+          <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button> -->
+          <!-- <form class="d-flex" role="search"> -->
+            <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
+            <!-- <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalSignup">SIGNUP</button> 
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalLogin">LOGIN</button>
+          </form> -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="navbartitles nav-link" aria-current="page" href="#services">Services</a>
+              </li>
+              <li class="nav-item">
+                <a class="navbartitles nav-link" href="#developer">Developer</a>
+              </li>
+              <li class="nav-item">
+                <a class="navbartitles nav-link" href="#developer">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="navbartitles nav-link" href="#reachus">Reach Us</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <form class="d-flex" role="search">
+          <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
+          <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalSignup">SIGNUP</button> 
+          <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalLogin">LOGIN</button>
+        </form>
+      </nav>
+
+
+      <!-- Corousel-->
+       <div class="row">
+        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="pics/badminton (1).jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="pics/badminton (2).jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="pics/badminton (3).jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="pics/badminton (4).jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="pics/badminton (5).jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="pics/badminton (6).jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="pics/badminton (7).jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="pics/badminton (8).jpg" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutop" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutop" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+
+      <!--)ur services bar-->
+      <br>
+      <nav class="navbar bg-body-tertiary" style="margin-bottom: 20px;">
+        <div class="container-fluid d-flex justify-content-center" id="services">
+          <a class="navbar-brand" id="services" ><b>Our Services</b></a>
+        </div>
+      </nav>
+
+      <div class="container r1">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card" >
+                    <img style="height: 295px;"  src="pics/publishtournamnet.webp" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <!-- <h5 class="card-title">Profile</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+                      <!-- <a href="profileorganiser.html" class="btn btn-primary margin"><b>PUBLSH TOURNAMENTS</b></a> -->
+                       <b>PUBLISH TOURNAMENT</b>
+    
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" >
+                    <img style="height: 295px;" src="pics/upcomintournament.webp" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <!-- <h5 class="card-title">Card title</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+                      <!-- <a href="publishtournament.html" class="btn btn-primary margin">--><b>UPCOMING TOURNAMENTS</b>
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" >
+                    <img  style="height: 295px;" src="pics/prizes.webp" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <!-- <h5 class="card-title">Card title</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+                      <b>WIN PRIZES</b>
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" >
+                    <div class="" id="i4">
+                    <img  style="height: 295px;" src="pics/certificate.jpg" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-body">
+                      <!-- <h5 class="card-title">Card title</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+                      <b>CERTIFICATIONS</b>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+      <br> <br>
+
+    <nav class="navbar bg-body-tertiary">
+      <div class="container-fluid d-flex justify-content-center">
+        <a class="navbar-brand" id="developer"><b>Our Team</b></a>
+      </div>
+    </nav>
+
+    
+ <br>
+ <div style="padding-left: 550px;">
+    <!-- <div class="card">
+      <div class="row"> 
+        <div class="col-md-3">
+      <div class="card-left">
+        <img src="pics/user.jpg" alt="Person's photo" class="profile-photo">
+      </div>
+    </div>
+      <div class="card-right">
+       <p>
+         <h3>Rajesh Sir (Mentor)</h3>
+         14+ years of experience <br>
+         Banglore Computer Education <br>
+         Bathinda <br>
+         Author of real java
+        </p>
+      </div>
+    </div>
+    </div>
+  </div> -->
+  <div class="card">
+    <div class="row"> 
+      <div class="col-md-3">
+    <div class="card-left">
+      <img src="pics/user.jpg" alt="Person's photo" class="profile-photo">
+    </div>
+    </div>
+    <div class="card-left">
+     <p>
+       <h3>Purvika Bansal</h3>
+       Full Stack Web Developer <br>
+       BTech(CSE)<br>
+       Thapar Institute of Engineering and Technology
+       Patiala
+      </p>
+    </div>
+  </div>
+  </div>
+</div>
+</div> <br> <br>
+
+<!-- <div class="row ">
+<nav class="navbar bg-body-tertiary">
+  <div class="container-fluid d-flex justify-content-center">
+    <a class="navbar-brand" href="#"><b>Reach Us</b></a>
+  </div>
+</nav>
+</div> -->
+<br><br>
+<div class="row " style="float: left; width: 100%; margin-top: 20px;">
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid d-flex justify-content-center">
+      <a class="navbar-brand" id="reachus"><b>Reach Us</b></a>
+    </div>
+  </nav>
+  </div>
+
+
+<div style="margin-top: 30px;">
+  <!-- <iframe src="<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448194.82162352453!2d77.09323125!3d28.6440836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x37205b715389640!2sDelhi!5e0!3m2!1sen!2sin!4v1732544705836!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>" width="100%" height="450" style="border:0;margin-top: 30px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> -->
+  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448194.82162352453!2d77.09323125!3d28.6440836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x37205b715389640!2sDelhi!5e0!3m2!1sen!2sin!4v1732544705836!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+ </div>
+
+ <div class="text-center py-3">
+  <small>
+    &copy; 2024 GameChase. All Rights Reserved.  
+    Unauthorized duplication or publication of any materials is prohibited.  
+  </small>
+</div>
+
+  
+
+
+     <!-- Include Bootstrap Icons for the eye icon -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<!-- Modal -->
+<div class="modal fade" id="modalSignup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Signup Here</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div>
+                        <img style="width: 100%; height: 200px;" src="pics/pulseforg.webp" alt="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="txtEmail" class="form-label">Email address</label>
+                        <input type="email" placeholder="Enter Email" class="form-control" id="txtEmail" aria-describedby="emailHelp">
+                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label for="txtPwd" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="txtPwd">
+                        <i class="bi bi-eye-slash position-absolute" id="toggleSignupPwd" style="right: 10px; top: 38px; cursor: pointer;"></i>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label for="utype" class="form-label">User Type</label>
+                        <br>
+                        <select id="utype" class="form-control" style="width: 100%; height: 45px;">
+                            <option value="none">Select</option>
+                            <option value="player">Player</option>
+                            <option value="organiser">Organiser</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="signupbtn" class="btn btn-success position-relative">
+                    Submit
+                </button>
+                <button type="button" class="btn btn-danger position-relative" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div>
+                        <img style="width: 100%; height: 200px;" src="pics/pulseforg.webp" alt="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginEmail" class="form-label">Email address</label>
+                        <input type="email" placeholder="Enter Email" class="form-control" id="loginEmail" aria-describedby="emailHelp">
+                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label for="loginPwd" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="loginPwd">
+                        <i class="bi bi-eye-slash position-absolute" id="toggleLoginPwd" style="right: 10px; top: 38px; cursor: pointer;"></i>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark position-relative" id="loginbtn">
+                    Login
+                </button>
+                <button type="button" class="btn btn-danger position-relative" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        icon.addEventListener("click", function () {
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            } else {
+                input.type = "password";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            }
+        });
+    }
+
+    togglePassword("txtPwd", "toggleSignupPwd");
+    togglePassword("loginPwd", "toggleLoginPwd");
+</script>
+
+    </form>
+</body>
+</html>

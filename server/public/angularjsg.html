@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script>
+      var module = angular.module("kuchModule", []);
+      var controller = module.controller("kuchController", function ($scope) {
+        $scope.fn = "Real Java";
+        $scope.doHello = function () {
+          alert("Hello Dear=" + $scope.fn);
+          alert($scope.full)
+        }
+
+        $scope.doJoin=function()
+        {
+            $scope.full=$scope.fn+" "+$scope.ln;
+            
+
+        }
+      });
+    </script>
+  </head>
+  <!-- View -->
+  <body ng-app="kuchModule" ng-controller="kuchController">
+    <center>
+      <p>First Name <input type="text" ng-model="fn" /></p>
+      <p>Last Name <input type="text" ng-model="ln" /></p>
+      <p>
+        <input type="button" value="Join" ng-click="doJoin();" />
+
+        <input type="button" value="Hello" ng-click="doHello();" />
+      </p>
+      <p>
+        Full Name=<input type="text" ng-model="full">
+      </p>
+      <p>{{fn}}</p>
+      <p>
+        {{full}}
+      </p>
+    </center>
+  </body>
+</html>
