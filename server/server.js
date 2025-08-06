@@ -4,6 +4,8 @@ var app=express();
 var fileuploader=require("express-fileupload");
 var mysql2=require("mysql2");
 var cloudinary=require("cloudinary").v2;
+const path = require('path');
+
 
 
 let config="mysql://avnadmin:AVNS_8p1dW-dFtL8yZd0i-ZA@mysql-177f9110-purvikabansal05-ae65.k.aivencloud.com:11245/defaultdb?";
@@ -21,7 +23,7 @@ cloudinary.config({
     api_secret: 'bMjM8exk7u1mWeE1z5IwVljelbE' // Click 'View API Keys' above to copy your API secret
 });
 app.use(fileuploader());
-app.use(express.urlencoded(true));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // For parsing JSON bodies
 
 // app.use(cors({ origin: 'https://pulseforge.onrender.com' })); //means ye website hi mera backend acces kr skti hai not any another website
