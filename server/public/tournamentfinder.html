@@ -1,152 +1,352 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <style>
-      .img
-      {
-         background-size:cover ;
-      }
-    </style>
-    <script>
-      var module = angular.module("kuchModule", []);
-      var controller = module.controller("kuchController", function ($scope,$http) 
-      {
-        $scope.doFetchAll=function()
-        {
-          let url="/fetch-all-tournaments?city="+$scope.txtselcity+"&game="+$scope.txtselgame;
-          $http.get(url).then(done,fail);
-          function done(response)
-          {
-            JSON.stringify(response.data);
-            $scope.jsonArray=response.data;
-          }
-          function fail(err)
-          {
-            alert(err.data);
-          }
-        }; 
-          $scope.doFetchCities=function()
-        {
-          let url="/fetch-all-cities";
-          $http.get(url).then(done,fail);
-          function done(response)
-          {
-            JSON.stringify(response.data);
-            $scope.jsonArrayC=response.data;
-          }
-          function fail(err)
-          {
-            alert(err.data);
-          }
+<html lang="en" ng-app="kuchModule">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PulseForge Tournament Finder</title>
 
-        };
-        $scope.doFetchGames=function()
-        {
-          let url="/fetch-all-games";
-          $http.get(url).then(done,fail);
-          function done(response)
-          {
-            JSON.stringify(response.data);
-            $scope.jsonArrayG=response.data;
-          }
-          function fail(err)
-          {
-            alert(err.data);
-          }
-         };
-         $scope.doFetchOne=function(index)
-         {
-          $scope.selObj=$scope.jsonArray[index];
-         }
-        });
+  <!-- AngularJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
 
-    </script>
-  </head>
-  <!-- View -->
-  <body ng-app="kuchModule" ng-controller="kuchController" ng-init="doFetchCities();doFetchGames();">
-    <div class="container">
-      <!-- <div class="row mt-4">
-    <div class="col-md-6"> <center><input type="button" class="btn btn-outline-primary" value="fetch Cities" ng-click="doFetchCities();"></center> </div>
-    <div class="col-md-6"><center> <input type="button" class="btn btn-outline-primary" value="fetch Games" ng-click="doFetchGames();"></center> </div>
-  </div> -->
-  <div class="row mt-4">
-  <div class="col-md-6"> 
-    Cities : 
-    <select class="form-select" ng-model="txtselcity" id="txtselcity" name="txtselcity">
-      <option value="none">Select</option>
-        <option ng-repeat="boxObj in jsonArrayC" value="{{boxObj.city}}">{{boxObj.city}}</option>
-    </select>
+  <!-- Bootstrap 5 CSS & JS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+  />
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f2c4f, #3a4a78);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #263645;
+    }
+
+    .main-card {
+      max-width: 900px;
+      margin: 3rem auto 5rem auto;
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgb(0 0 0 / 0.2);
+      padding: 2.5rem 2rem 3rem 2rem;
+    }
+
+    h1 {
+      font-weight: 700;
+      color: #0d6efd;
+      letter-spacing: 0.05em;
+    }
+
+    h5.card-title {
+      color: #0a4a91;
+      font-weight: 600;
+    }
+
+    label.form-label {
+      font-weight: 600;
+      color: #1c3a6e;
+      font-size: 1rem;
+    }
+
+    /* Custom button styling */
+    .btn-find {
+      background: linear-gradient(90deg, #3880ff, #5ee2ff);
+      color: #003366;
+      font-weight: 700;
+      border-radius: 2rem;
+      padding: 0.625rem 2.5rem;
+      transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .btn-find:hover,
+    .btn-find:focus {
+      background: linear-gradient(90deg, #5ee2ff, #3880ff);
+      box-shadow: 0 0 15px rgb(94 226 255 / 0.7);
+      color: #001a33;
+    }
+
+    /* Tournament cards */
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 9px 20px rgb(0 0 0 / 0.2);
+      z-index: 2;
+    }
+
+    .card img {
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+      object-fit: cover;
+      height: 140px;
+      width: 100%;
+    }
+
+    .modal-header.bg-primary {
+      background: linear-gradient(90deg, #3880ff, #5ee2ff);
+      color: white;
+      font-weight: 700;
+      text-align: center;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+    }
+
+    .modal-content {
+      border-radius: 1rem;
+    }
+
+    .modal-body img {
+      max-width: 100%;
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+      object-fit: cover;
+    }
+
+    /* Empty state */
+    .empty-state {
+      margin: 3rem 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #4a617f;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem 0;
+      background: #11223f;
+      color: #a0b0d0;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+  </style>
+
+  <script>
+    var module = angular.module("kuchModule", []);
+    module.controller("kuchController", function ($scope, $http) {
+      $scope.jsonArray = [];
+      $scope.jsonArrayC = [];
+      $scope.jsonArrayG = [];
+      $scope.selObj = {};
+
+      $scope.doFetchCities = function () {
+        $http
+          .get("/fetch-all-cities")
+          .then(function (response) {
+            $scope.jsonArrayC = response.data;
+          })
+          .catch(function (err) {
+            alert(err.data || "Failed to fetch cities");
+          });
+      };
+
+      $scope.doFetchGames = function () {
+        $http
+          .get("/fetch-all-games")
+          .then(function (response) {
+            $scope.jsonArrayG = response.data;
+          })
+          .catch(function (err) {
+            alert(err.data || "Failed to fetch games");
+          });
+      };
+
+      $scope.doFetchAll = function () {
+        if ($scope.txtselcity === "none" || !$scope.txtselcity)
+          $scope.txtselcity = ""; // empty to fetch all
+        if ($scope.txtselgame === "none" || !$scope.txtselgame)
+          $scope.txtselgame = ""; // empty to fetch all
+
+        const url =
+          "/fetch-all-tournaments?city=" +
+          encodeURIComponent($scope.txtselcity) +
+          "&game=" +
+          encodeURIComponent($scope.txtselgame);
+
+        $http
+          .get(url)
+          .then(function (response) {
+            $scope.jsonArray = response.data;
+          })
+          .catch(function (err) {
+            alert(err.data || "Failed to fetch tournaments");
+          });
+      };
+
+      $scope.doFetchOne = function (index) {
+        $scope.selObj = $scope.jsonArray[index];
+      };
+
+      // Init
+      $scope.doFetchCities();
+      $scope.doFetchGames();
+    });
+  </script>
+</head>
+
+<body ng-controller="kuchController" ng-init="doFetchCities();doFetchGames()">
+  <div class="main-card">
+    <div class="text-center mb-4">
+      <img
+        src="pics/pulseforg.webp"
+        alt="PulseForge Logo"
+        style="width: 72px; border-radius: 50%; box-shadow: 0 0 10px #1d6efd;"
+      />
+      <h1 class="my-3">PulseForge Tournaments</h1>
+      <p class="text-muted fs-5">Find & Join Local Sports Events Instantly!</p>
     </div>
-    <div class="col-md-6"> 
-    Sports: 
-    <select class="form-select" ng-model="txtselgame" id="txtselgame" name="txtselgame">
-      <option value="none">Select</option>
-        <option ng-repeat="boxObj in jsonArrayG" value="{{boxObj.game}}">{{boxObj.game}}</option>
-    </select>
+
+    <div class="row mb-3 gy-3 gx-4 justify-content-center align-items-end">
+      <div class="col-12 col-md-5">
+        <label for="txtselcity" class="form-label"
+          ><i class="bi bi-building-door-fill me-2"></i>Cities</label
+        >
+        <select
+          class="form-select"
+          id="txtselcity"
+          name="txtselcity"
+          ng-model="txtselcity"
+        >
+          <option value="none">-- Select City --</option>
+          <option ng-repeat="boxObj in jsonArrayC" value="{{boxObj.city}}">
+            {{boxObj.city}}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-5">
+        <label for="txtselgame" class="form-label">
+          <i class="bi bi-trophy-fill me-2"></i>Sports
+        </label>
+        <select
+          class="form-select"
+          id="txtselgame"
+          name="txtselgame"
+          ng-model="txtselgame"
+        >
+          <option value="none">-- Select Sport --</option>
+          <option ng-repeat="boxObj in jsonArrayG" value="{{boxObj.game}}">
+            {{boxObj.game}}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12 text-center mt-2">
+        <button
+          type="button"
+          class="btn btn-find shadow"
+          ng-click="doFetchAll()"
+          aria-label="Find tournaments"
+        >
+          Find Tournaments
+        </button>
+      </div>
+    </div>
+
+    <h5 class="mb-3 text-center fw-semibold">Tournaments</h5>
+
+    <div ng-if="!jsonArray.length" class="empty-state">
+      No tournaments found for your selections. Try a different city or sport!
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-sm-6 col-md-4" ng-repeat="boxObj in jsonArray">
+        <div
+          class="card h-100 shadow-sm"
+          role="button"
+          tabindex="0"
+          data-bs-toggle="modal"
+          data-bs-target="#modal1"
+          ng-click="doFetchOne($index)"
+        >
+          <img
+            ng-src="{{boxObj.poster || 'pics/default-sport.png'}}"
+            alt="{{boxObj.title}} Poster"
+          />
+          <div class="card-body text-center">
+            <h5 class="card-title">{{boxObj.title}}</h5>
+            <span class="badge bg-primary text-uppercase">{{boxObj.game}}</span>
+            <p class="mb-1 text-muted">
+              {{boxObj.city}} &bull; {{boxObj.tournamentdate | date : "yyyy-MM-dd"}}
+            </p>
+            <p class="text-success fw-semibold">Entry Fee: ₹{{boxObj.fee}}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-    <center>
-        <br> <br> <br>
-        <button type="button" class="btn btn-dark" ng-click="doFetchAll();">Show All Tournaments</button>
-        <br> <br> <br>
-      <!-- <input type="button" value="Show All Tournaments" ng-click="doFetchAll();"> -->
-        <h5><p>Tournaments</p></h5>
-    </center>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-3" ng-repeat="boxObj  in jsonArray" >
-            <div class="card">
-             <center> <img src="{{boxObj.poster}}" width="100" height="100"  alt="..."></center>
-              <div class="card-body">
-                <h5>{{boxObj.title}}</h5>
-                <h5 class="card-title">Game-{{boxObj.game}}</h5>
-                <!-- <h5 class="card-title">{{boxObj.tournamentdate}}</h5> -->
-                <h5 class="card-title">Date-{{boxObj.tournamentdate | date: "yyyy-MM-dd"}}</h5>
 
-                <h5 class="card-title">Entry-fee-{{boxObj.fee}}</h5>
-                <center>
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal1"ng-click="doFetchOne($index)">Details</a>
-               </center>
-              </div>
-            </div>
+  <!-- Tournament Details Modal -->
+  <div
+    class="modal fade"
+    id="modal1"
+    tabindex="-1"
+    aria-labelledby="modal1Label"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary">
+          <h4 class="modal-title w-100 text-center" id="modal1Label">
+            {{selObj.title}}
+          </h4>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center mb-3">
+            <img
+              ng-src="{{selObj.poster || 'pics/default-sport.png'}}"
+              alt="{{selObj.title}} Poster"
+              style="max-height: 250px; border-radius: 1rem; object-fit: cover"
+            />
           </div>
+          <p>
+            <b>Game:</b> {{selObj.game}} <br />
+            <b>Entry Fee:</b> ₹{{selObj.fee}} <br />
+            <b>Date:</b> {{selObj.tournamentdate | date : "yyyy-MM-dd"}} <br />
+            <b>Location:</b> {{selObj.location}} <br />
+            <b>City:</b> {{selObj.city}} <br />
+            <b>Other Info:</b> {{selObj.info || 'N/A'}}
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-
-    <div class="modal" tabindex="-1" id="modal1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title"><h3>{{selObj.title}}</h3></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>
-              <div class="img">
-              <img  style="height: 200px; width: 200px;" src="{{selObj.poster}}" alt=""  >
-             </div>
-             <b> Game:</b>{{selObj.game}}  <br>
-            <b>Entry Fee:</b> {{selObj.fee}}  <br>
-             <b>Date of Tournament:</b> {{selObj.tournamentdate}} <br>
-             <b> Location:</b> {{selObj.location}} <br>
-              <b>City:</b>{{selObj.city}} <br>
-              <b>Other Info:</b>{{selObj.info}} <br>
-            </p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
+  <footer>
+    &copy; 2024 PulseForge. All rights reserved.
+  </footer>
+</body>
 </html>
