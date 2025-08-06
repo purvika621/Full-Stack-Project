@@ -1,152 +1,461 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script>
-      $(document).ready(function(){
-        alert(localStorage.getItem("activeuser"));
-        $("#activeuser").html(localStorage.getItem("activeuser"));
-          
-        $("#btnlogout").click(function()  //jab logout card pe click kre to user logout ho jaaye 
-      {
-        localStorage.removeItem("activeuser");
-        location.href="index.html";
-      })
-      $("#update").click(function(){
-        let email=$("#txtemail").val();
-        let curpass=$("#txtoldpwd").val();
-        let newpass=$("#txtnewpwd").val();
-        let obj1={
-          type:"get",
-          url:"/update-password",
-          data:{
-            txtmail:email,
-            txtop:curpass,
-            txtnp:newpass,
-          }
-        }
-        $.ajax(obj1).done(function(response) {
-            alert(response);
-        }).fail(function(err) {
-            alert(err.message);
-        });
-      })
-      });
-    </script>
-    <style>
-        .r1
-        {
-              padding-top: 100px;
-        }
-         #i4  /*changing size of 4th image */
-        {
-               background-size: contain;
-        }
-        .margin
-        {
-            margin-left: 80px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Player Dashboard</title>
+
+  <!-- Bootstrap CSS & JS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <style>
+    :root {
+      --card-bg: #fafdff;
+      --app-bg: linear-gradient(135deg, #23243a 0%, #3a4a73 100%);
+      --text-main: #203040;
+      --accent: #4087f5;
+      --shadow: 0 2px 18px #2230550d;
+    }
+    [data-theme='dark'] {
+      --card-bg: #181f39;
+      --app-bg: linear-gradient(135deg, #10121a 0%, #23243a 100%);
+      --text-main: #e3e7ee;
+      --accent: #5ce3fa;
+      --shadow: 0 4px 28px #13234550;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--app-bg);
+      color: var(--text-main);
+      font-family: 'Segoe UI', 'Roboto', sans-serif;
+      transition: background 0.6s, color 0.6s;
+      position: relative;
+    }
+
+    .dashboard-container {
+      position: relative;
+      z-index: 2;
+      max-width: 1150px;
+      margin: 2.5rem auto 2rem auto;
+      padding: 2.5rem 2rem 2rem 2rem;
+      background: rgba(255, 255, 255, 0.76);
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 40px rgb(30 48 148 / 0.13);
+      backdrop-filter: blur(2.5px);
+      transition: background 0.6s, color 0.6s;
+    }
+    [data-theme='dark'] .dashboard-container {
+      background: rgba(30, 36, 68, 0.93);
+    }
+
+    .dashboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+    }
+    .dashboard-header h2 {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+    }
+    .notif-badge {
+      position: absolute;
+      top: 1px;
+      right: 0;
+      background: #ff4757;
+      color: #fff;
+      font-size: 0.85rem;
+      border-radius: 10px;
+      min-width: 20px;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      box-shadow: 0 1px 5px #0003;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .svg-bg {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    .dashboard-row {
+      margin-top: 2.3rem;
+    }
+
+    /* Card styling */
+    .dashboard-card {
+      background: var(--card-bg);
+      border-radius: 1.2rem;
+      box-shadow: var(--shadow);
+      border: 0;
+      min-height: 335px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.22s, box-shadow 0.22s;
+      padding-bottom: 1.2rem;
+    }
+    .dashboard-card:hover {
+      transform: translateY(-6px) scale(1.021);
+      box-shadow: 0 8px 28px #4387f51a;
+    }
+    .dashboard-card .card-img-top {
+      width: 96px;
+      height: 96px;
+      object-fit: cover;
+      border-radius: 1em;
+      background: #e8f0fb;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px #2cbce30e;
+      padding: 0.28rem;
+      display: block;
+    }
+    [data-theme='dark'] .dashboard-card .card-img-top {
+      background: #1b2041;
+    }
+    .dashboard-card .btn {
+      font-size: 0.96rem !important;
+      padding: 0.34rem 1.2rem !important;
+      border-radius: 2rem !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      margin-top: 0.45rem !important;
+      margin-bottom: 0 !important;
+      box-shadow: 0 1px 4px #22305514;
+      transition: background 0.15s, color 0.15s;
+    }
+    .dashboard-card .btn-primary {
+      background: #4287f5;
+      border: none;
+    }
+    .dashboard-card .btn-primary:hover {
+      background: linear-gradient(90deg, #3880ff, #5ee2ff);
+      color: #012445;
+    }
+    .dashboard-card .btn-danger {
+      background: #dc3545;
+      border: none;
+    }
+    .dashboard-card .btn-danger:hover {
+      background: #c82333;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-container {
+        padding: 1rem 0.3rem;
+      }
+    }
+    @media (max-width: 600px) {
+      .dashboard-header {
+        flex-direction: column;
+        gap: 0.4rem 0;
+      }
+      .dashboard-container {
+        padding: 0.7rem 0.3rem;
+      }
+    }
+
+    /* Activity feed styles */
+    .activity-feed {
+      margin-top: 2rem;
+      background: var(--card-bg);
+      border-radius: 1rem;
+      padding: 1.2rem 1.7rem;
+      box-shadow: 0 2px 8px #2230550f;
+    }
+    .activity-feed h5 {
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .activity-item {
+      padding: 0.67rem 0;
+      border-bottom: 1px solid #e4e8fc;
+      font-size: 1rem;
+    }
+    .activity-item:last-child {
+      border-bottom: 0;
+    }
+
+    /* Theme toggle styling */
+    .theme-toggle {
+      cursor: pointer;
+      border: 1px solid #ccccde;
+      border-radius: 2em;
+      padding: 0.35em 1.15em;
+      background: #f4f7fd;
+      color: #203045;
+      margin-left: 10px;
+      font-size: 1.03rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      transition: background 0.19s, color 0.16s;
+      line-height: 1.57;
+    }
+    [data-theme='dark'] .theme-toggle {
+      background: #1e223a;
+      color: #e2e6ef;
+      border: 1px solid #344870;
+    }
+    .theme-toggle .bi {
+      margin-right: 7px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6"></div>
-      <div class="col-md-6"></div>
-      Welcome:<span id="activeuser"></span>
-    </div>
+  <!-- SVG animated background -->
+  <div class="svg-bg">
+    <svg width="100%" height="100%">
+      <ellipse cx="60%" cy="12%" rx="380" ry="94" fill="#3896ff18">
+        <animate attributeName="cy" values="12%;18%;12%" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="30%" cy="84%" rx="310" ry="76" fill="#70eafc19">
+        <animate attributeName="cx" values="25%;38%;25%" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="90%" cy="60%" rx="160" ry="84" fill="#66eabba8">
+        <animate attributeName="cy" values="63%;71%;63%" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      <circle cx="75%" cy="50%" r="70" fill="#34c1e944">
+        <animate attributeName="cx" values="75%;68%;75%" dur="9s" repeatCount="indefinite" />
+      </circle>
+    </svg>
   </div>
-    <p>
-    <center>
-    <h2>Player Dashboard</h2>
-</center></p>
- <div class="container r1">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card" >
-                <img src="pics/profile.webp" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <!-- <h5 class="card-title">Profile</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-                  <a href="profileplayer.html" class="btn btn-primary margin"><b>PROFILE</b></a>
 
-                </div>
-              </div>
+  <div class="dashboard-container position-relative">
+    <div class="dashboard-header mb-2">
+      <div class="d-flex align-items-center gap-4">
+        <img src="pics/user.jpg" alt="User Avatar" class="rounded-circle shadow-sm" width="54" height="54" style="object-fit: cover;" />
+        <div>
+          <div class="fs-5 mb-0">Welcome, <span id="activeuser" class="fw-bold"></span></div>
+          <div class="text-muted small">Logged in as Player</div>
         </div>
-        <div class="col-md-3">
-            <div class="card" >
-                <img src="pics/postevents.webp" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <!-- <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-                  <a href="tournamentfinder.html" class="btn btn-primary margin"><b>FIND TOURNAMENTS</b></a>
-                </div>
-              </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <!-- Notification bell -->
+        <div class="dropdown notification-bell" id="notifBell" data-bs-toggle="dropdown" aria-expanded="false" role="button" tabindex="0">
+          <i class="bi bi-bell fs-2 position-relative" aria-label="Notifications"></i>
+          <span class="notif-badge" id="notifBadge">2</span>
         </div>
-        <div class="col-md-3">
-            <div class="card" >
-                <img src="pics/settings.webp" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <!-- <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-                  <a href="#" class="btn btn-primary margin" data-bs-toggle="modal" data-bs-target="#modalupdate"><b>SETTINGS</b></a>
-                </div>
-              </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card" >
-                <div class="" id="i4">
-                <img src="pics/logout-final.jpg" class="card-img-top" alt="...">
-                </div>
-                <div class="card-body">
-                  <!-- <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-                  <a href="#" class="btn btn-primary margin" id="btnlogout" ><b>LOGOUT</b></a>
-                </div>
-              </div>
-        </div>
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notifBell" style="min-width: 330px;">
+          <li class="dropdown-header fw-semibold">Notifications</li>
+          <li>
+            <a class="dropdown-item" href="#"><i class="bi bi-calendar2-check text-success"></i> &nbsp; You registered for 'Summer League 2025'</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#"><i class="bi bi-envelope text-info"></i> &nbsp; Invitation: 'City Badminton Fest'</a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><a class="dropdown-item text-center small text-primary" href="#">View all notifications</a></li>
+        </ul>
+
+        <!-- Theme toggle -->
+        <button class="theme-toggle ms-2" id="themeSwitch" aria-label="Toggle Light/Dark Mode">
+          <i class="bi bi-moon-stars"></i> Dark
+        </button>
+      </div>
     </div>
-</div>
-<div class="modal fade" id="modalupdate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white ">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Change Password</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <hr />
+
+    <div class="text-center" style="margin-top: 1.1rem; margin-bottom: -0.6rem">
+      <h2 class="fw-bold" style="color: var(--accent); letter-spacing: 0.038em;">Player Dashboard</h2>
+    </div>
+
+    <div class="row dashboard-row g-4 justify-content-center">
+      <!-- Profile Card -->
+      <div class="col-12 col-sm-6 col-md-3 mb-4">
+        <div class="card dashboard-card text-center h-100 shadow-sm" tabindex="0" role="button" aria-label="Go to Profile">
+          <img src="pics/profile.webp" class="card-img-top" alt="Profile" />
+          <div class="card-body d-flex flex-column align-items-center">
+            <a href="profileplayer.html" class="btn btn-primary btn-sm rounded-pill margin mb-0"
+               style="width: auto; min-width: 96px;">
+              <i class="bi bi-person-lines-fill me-2"></i>Profile
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-          <form>
-              <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" placeholder="Enter Email" class="form-control" id="txtemail" aria-describedby="emailHelp">
-                
-              </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label"> Old Password</label>
-                <input type="password" class="form-control" id="txtoldpwd">
-              </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label"> New Password</label>
-                <input type="password" class="form-control" id="txtnewpwd">
-              </div>
-               </form>
+
+      <!-- Tournaments Card -->
+      <div class="col-12 col-sm-6 col-md-3 mb-4">
+        <div class="card dashboard-card text-center h-100 shadow-sm" tabindex="0" role="button" aria-label="Find Tournaments">
+          <img src="pics/postevents.webp" class="card-img-top" alt="Tournaments" />
+          <div class="card-body d-flex flex-column align-items-center">
+            <a href="tournamentfinder.html" class="btn btn-primary btn-sm rounded-pill margin mb-0"
+               style="width: auto; min-width: 96px;">
+              <i class="bi bi-trophy-fill me-2"></i>Find Tournaments
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="modal-footer">
-       
-          <button type="button" class="btn btn-dark position-relative" formaction="/update-password" id="update">
-               Update
-            </button>
-            <button type="button" class="btn btn-danger position-relative" data-bs-dismiss="modal">
-              Cancel
-           </button>
+
+      <!-- Settings Card -->
+      <div class="col-12 col-sm-6 col-md-3 mb-4">
+        <div class="card dashboard-card text-center h-100 shadow-sm" tabindex="0" role="button" aria-label="Open Settings">
+          <img src="pics/settings.webp" class="card-img-top" alt="Settings" />
+          <div class="card-body d-flex flex-column align-items-center">
+            <a href="#" class="btn btn-primary btn-sm rounded-pill margin mb-0" data-bs-toggle="modal" data-bs-target="#modalupdate"
+               style="width: auto; min-width: 96px;">
+              <i class="bi bi-gear-fill me-2"></i>Settings
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout Card -->
+      <div class="col-12 col-sm-6 col-md-3 mb-4">
+        <div class="card dashboard-card text-center h-100 shadow-sm" tabindex="0" role="button" aria-label="Logout">
+          <img src="pics/logout-final.jpg" class="card-img-top" alt="Logout" />
+          <div class="card-body d-flex flex-column align-items-center">
+            <a href="#" id="btnlogout" class="btn btn-danger btn-sm rounded-pill margin mb-0"
+               style="width: auto; min-width: 96px;">
+              <i class="bi bi-power me-2"></i>Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="activity-feed mt-4 mb-2 shadow-sm" role="region" aria-label="Recent activity">
+      <h5><i class="bi bi-clock-history me-2"></i>Recent Activity</h5>
+      <div class="activity-item">
+        <i class="bi bi-check2-circle text-success me-2"></i> Registered for "Summer League 2025"
+      </div>
+      <div class="activity-item">
+        <i class="bi bi-pencil-square text-warning me-2"></i> Updated profile picture
+      </div>
+      <div class="activity-item">
+        <i class="bi bi-trophy text-primary me-2"></i> Joined "Open Badminton Fest"
+      </div>
+      <div class="activity-item">
+        <i class="bi bi-calendar2-event me-2"></i> New tournament added to calendar
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Password Change Modal -->
+  <div class="modal fade" id="modalupdate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white ">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Change Password</h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input type="email" placeholder="Enter Email" class="form-control" id="txtemail" aria-describedby="emailHelp" />
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Old Password</label>
+              <input type="password" class="form-control" id="txtoldpwd" />
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="txtnewpwd" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" formaction="/update-password" id="update">Update</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      // Set logged-in user
+      $("#activeuser").html(localStorage.getItem("activeuser") ?? "Player");
+
+      // Fill modal email when shown
+      $("#modalupdate").on("shown.bs.modal", function () {
+        $("#txtemail").val(localStorage.getItem("activeuser") ?? "");
+      });
+
+      // Logout action
+      $("#btnlogout").click(function () {
+        localStorage.removeItem("activeuser");
+        location.href = "index.html";
+      });
+
+      // Password update AJAX
+      $("#update").click(function () {
+        const email = $("#txtemail").val();
+        const curpass = $("#txtoldpwd").val();
+        const newpass = $("#txtnewpwd").val();
+        $.ajax({
+          type: "get",
+          url: "/update-password",
+          data: {
+            txtmail: email,
+            txtop: curpass,
+            txtnp: newpass,
+          },
+        })
+          .done(function (response) {
+            alert(response);
+          })
+          .fail(function (err) {
+            alert(err.message);
+          });
+      });
+
+      // Theme toggle
+      let currentTheme = localStorage.getItem("theme") || "light";
+      setTheme(currentTheme);
+
+      $("#themeSwitch").click(function () {
+        let next = document.body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        setTheme(next);
+        localStorage.setItem("theme", next);
+      });
+
+      function setTheme(theme) {
+        if (theme === "dark") {
+          document.body.setAttribute("data-theme", "dark");
+          $("#themeSwitch").html('<i class="bi bi-sun-fill"></i> Light');
+        } else {
+          document.body.setAttribute("data-theme", "light");
+          $("#themeSwitch").html('<i class="bi bi-moon-stars"></i> Dark');
+        }
+      }
+    });
+  </script>
 </body>
 </html>
