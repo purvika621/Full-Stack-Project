@@ -31,7 +31,7 @@ app.use(cors({
   })); //means ye website hi mera backend acces kr skti hai not any another website
   
 
-app.use(express.static('public')); // Assuming your pics folder is in the public directory this line is used to make the fixed pics visible in  my website 
+app.use(express.static(path.join(__dirname, 'public')));
 //but due to this line i was not able to open any other html file(only the index.html was opening agian and agian) through the serveer therefore i commented this line
 
 app.get("/",function(req,resp){
